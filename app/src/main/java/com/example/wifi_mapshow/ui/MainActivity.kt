@@ -169,6 +169,7 @@ class MainActivity : ComponentActivity() {
             paint.color = RssiColorUtil.colorForRssi(filteredPoint.network.rssi)
             canvas.drawCircle(px, py, DOT_RADIUS_PX, paint)
 
+
             paint.color = Color.BLACK
             val network = filteredPoint.network
             val fullSet = "${network.ssid}/${network.bssid}/ch${network.channel}/${network.rssi}dBm/${network.encryption}"
