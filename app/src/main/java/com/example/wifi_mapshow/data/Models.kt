@@ -1,7 +1,6 @@
 package com.example.wifi_mapshow.data
 
 import com.google.gson.annotations.SerializedName
-import com.google.gson.Gson
 
 data class ProjectRoot(
     @SerializedName("map_image")
@@ -34,5 +33,10 @@ data class WifiNetwork(
     val encryption: String
 ) {
     val rssi: Int
-        get() = rssiRaw.replace(" dBm", "").toInt()
+        get() = rssiRaw
+            .trim()
+            .replace("dBm", "", ignoreCase = true)
+            .trim()
+            .toIntOrNull()
+            ?: Int.MIN_VALUE
 }
