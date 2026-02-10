@@ -22,6 +22,13 @@ import com.example.wifi_mapshow.util.RssiColorUtil
 
 class MainActivity : ComponentActivity() {
 
+    private companion object {
+        const val TEMPLATE_MAX_X = 1000f
+        const val TEMPLATE_MAX_Y = 1700f
+        const val DOT_SIZE_PX = 30f
+        const val DOT_RADIUS_PX = DOT_SIZE_PX / 2f
+    }
+
     private val viewModel: MainViewModel by viewModels()
 
     private lateinit var mapImage: ImageView
@@ -144,18 +151,24 @@ class MainActivity : ComponentActivity() {
         val mapWidth = mapDrawable.intrinsicWidth.toFloat().coerceAtLeast(1f)
         val mapHeight = mapDrawable.intrinsicHeight.toFloat().coerceAtLeast(1f)
 
-        val scale = minOf(overlay.width / mapWidth, overlay.height / mapHeight)
-        val drawWidth = mapWidth * scale
-        val drawHeight = mapHeight * scale
+        // Рассчитываем область фактической отрисовки карты в fitCenter
+        val mapScale = minOf(overlay.width / mapWidth, overlay.height / mapHeight)
+        val drawWidth = mapWidth * mapScale
+        val drawHeight = mapHeight * mapScale
         val offsetX = (overlay.width - drawWidth) / 2f
         val offsetY = (overlay.height - drawHeight) / 2f
 
+        // Нормализуем координаты по размерности шаблона источника (примерно 1000 x 1700)
+        val xScale = drawWidth / TEMPLATE_MAX_X
+        val yScale = drawHeight / TEMPLATE_MAX_Y
+
         points.forEach { filteredPoint ->
-            val px = offsetX + (filteredPoint.x * scale)
-            val py = offsetY + (filteredPoint.y * scale)
+            val px = offsetX + (filteredPoint.x * xScale)
+            val py = offsetY + (filteredPoint.y * yScale)
 
             paint.color = RssiColorUtil.colorForRssi(filteredPoint.network.rssi)
-            canvas.drawCircle(px, py, 6f, paint)
+            canvas.drawCircle(px, py, DOT_RADIUS_PX, paint)
+
 
             paint.color = Color.BLACK
             val network = filteredPoint.network
