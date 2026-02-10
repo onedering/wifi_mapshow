@@ -1,46 +1,12 @@
 package com.example.wifi_mapshow.ui
 
+
+
 import android.net.Uri
 import androidx.lifecycle.ViewModel
-import com.example.wifi_mapshow.data.ProjectRoot
-import com.example.wifi_mapshow.data.ScanPoint
-import com.example.wifi_mapshow.data.WifiNetwork
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-
-enum class ChannelBand(
-    val title: String,
-    private val matcher: (Int) -> Boolean
-) {
-    BAND_24("2.4 ГГц (1-13)", { it in 1..13 }),
-    BAND_5("5 ГГц (34-180)", { it in 34..180 }),
-    BAND_6_LOW("6 ГГц (14-33)", { it in 14..33 }),
-    BAND_6_HIGH("6 ГГц (>180)", { it > 180 }),
-    ALL("Все каналы", { true });
-
-    fun matches(channel: Int): Boolean = matcher(channel)
-
-    override fun toString(): String = title
-}
-
-sealed interface NetworkFilterOption {
-    val label: String
-
-    data object AllSsids : NetworkFilterOption {
-        override val label: String = "Все SSID (все BSSID)"
-
-        override fun toString(): String = label
-    }
-
-    data class SsidBssid(
-        val ssid: String,
-        val bssid: String
-    ) : NetworkFilterOption {
-        override val label: String = "$ssid ($bssid)"
-
-        override fun toString(): String = label
-    }
-}
+import com.example.wifi_mapshow.data.*
 
 class MainViewModel : ViewModel() {
 
@@ -50,8 +16,9 @@ class MainViewModel : ViewModel() {
     private val _mapUri = MutableStateFlow<Uri?>(null)
     val mapUri: StateFlow<Uri?> = _mapUri
 
-    var selectedBand: ChannelBand = ChannelBand.ALL
-    var selectedNetworkFilter: NetworkFilterOption = NetworkFilterOption.AllSsids
+    var selectedChannelRange: (Int) -> Boolean = { true }
+    var selectedSsid: String? = null
+    var selectedBssid: String? = null
 
     fun setProject(project: ProjectRoot) {
         _points.value = project.points
@@ -61,26 +28,17 @@ class MainViewModel : ViewModel() {
         _mapUri.value = uri
     }
 
-    fun networkFilterOptions(): List<NetworkFilterOption> {
-        val uniqueNetworks = _points.value
-            .flatMap { it.networks }
-            .distinctBy { "${it.ssid}|${it.bssid}" }
-            .sortedWith(compareBy<WifiNetwork> { it.ssid }.thenBy { it.bssid })
-            .map { NetworkFilterOption.SsidBssid(it.ssid, it.bssid) }
-
-        return listOf(NetworkFilterOption.AllSsids) + uniqueNetworks
-    }
-
     fun filterNetworks(): List<FilteredPoint> {
         return _points.value.mapNotNull { point ->
             val filtered = point.networks
-                .filter { selectedBand.matches(it.channel) }
+                .filter { selectedChannelRange(it.channel) }
                 .filter {
-                    when (val option = selectedNetworkFilter) {
-                        is NetworkFilterOption.AllSsids -> true
-                        is NetworkFilterOption.SsidBssid -> {
-                            it.ssid == option.ssid && it.bssid == option.bssid
-                        }
+                    when {
+                        selectedBssid != null ->
+                            it.ssid == selectedSsid && it.bssid == selectedBssid
+                        selectedSsid != null ->
+                            it.ssid == selectedSsid
+                        else -> true
                     }
                 }
 
