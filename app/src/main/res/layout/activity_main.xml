@@ -1,9 +1,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="?attr/colorSurface">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="67dp"
+        app:srcCompat="@android:drawable/alert_light_frame" />
 
     <LinearLayout
         android:id="@+id/controlPanel"
@@ -15,42 +22,23 @@
         android:elevation="6dp">
 
         <Button
-            android:id="@+id/openMapButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Открыть карту" />
-
-        <Button
             android:id="@+id/openJsonButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="Открыть JSON" />
 
-        <Spinner
-            android:id="@+id/channelSpinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp" />
-
-        <Spinner
-            android:id="@+id/networkSpinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp" />
-
         <Button
-            android:id="@+id/showButton"
+            android:id="@+id/openMapButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Показать" />
+            android:text="Открыть карту" />
 
     </LinearLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="398dp"
         android:layout_weight="1"
         android:padding="8dp">
 
@@ -69,5 +57,30 @@
             android:scaleType="fitXY" />
 
     </FrameLayout>
+
+    <Spinner
+        android:id="@+id/channelSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp" />
+
+    <Spinner
+        android:id="@+id/networkSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp" />
+
+    <Button
+        android:id="@+id/showButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Показать" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+        app:srcCompat="@android:drawable/bottom_bar" />
 
 </LinearLayout>
