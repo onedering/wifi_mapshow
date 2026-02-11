@@ -40,6 +40,14 @@ sealed interface NetworkFilterOption {
 
         override fun toString(): String = label
     }
+
+    data class SsidAllBssids(
+        val ssid: String
+    ) : NetworkFilterOption {
+        override val label: String = "$ssid (все BSSID)"
+
+        override fun toString(): String = label
+    }
 }
 
 class MainViewModel : ViewModel() {
@@ -62,13 +70,20 @@ class MainViewModel : ViewModel() {
     }
 
     fun networkFilterOptions(): List<NetworkFilterOption> {
+        val uniqueSsids = _points.value
+            .flatMap { it.networks }
+            .map { it.ssid }
+            .distinct()
+            .sorted()
+            .map { NetworkFilterOption.SsidAllBssids(it) }
+
         val uniqueNetworks = _points.value
             .flatMap { it.networks }
             .distinctBy { "${it.ssid}|${it.bssid}" }
             .sortedWith(compareBy<WifiNetwork> { it.ssid }.thenBy { it.bssid })
             .map { NetworkFilterOption.SsidBssid(it.ssid, it.bssid) }
 
-        return listOf(NetworkFilterOption.AllSsids) + uniqueNetworks
+        return listOf(NetworkFilterOption.AllSsids) + uniqueSsids + uniqueNetworks
     }
 
     fun filterNetworks(): List<FilteredPoint> {
@@ -78,6 +93,9 @@ class MainViewModel : ViewModel() {
                 .filter {
                     when (val option = selectedNetworkFilter) {
                         is NetworkFilterOption.AllSsids -> true
+                        is NetworkFilterOption.SsidAllBssids -> {
+                            it.ssid == option.ssid
+                        }
                         is NetworkFilterOption.SsidBssid -> {
                             it.ssid == option.ssid && it.bssid == option.bssid
                         }
