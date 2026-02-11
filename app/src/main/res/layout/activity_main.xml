@@ -28,9 +28,29 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+<<<<<<< Updated upstream
         android:background="?attr/colorSurfaceContainerHigh"
         android:padding="12dp"
         android:elevation="6dp">
+=======
+        android:padding="8dp">
+
+        <Spinner
+            android:id="@+id/channelSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Spinner
+            android:id="@+id/networkSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/openMapButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Открыть карту" />
+>>>>>>> Stashed changes
 
         <Button
             android:id="@+id/openJsonButton"
@@ -39,6 +59,7 @@
             android:layout_marginTop="8dp"
             android:text="Открыть JSON" />
 
+<<<<<<< Updated upstream
         <Spinner
             android:id="@+id/channelSpinner"
             android:layout_width="match_parent"
@@ -102,10 +123,15 @@
     </LinearLayout>
 
 >>>>>>> Stashed changes
+=======
+    </LinearLayout>
+
+>>>>>>> Stashed changes
     <Button
         android:id="@+id/showButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
         android:layout_marginTop="8dp"
         android:text="Показать" />
@@ -118,6 +144,8 @@
 
 </LinearLayout>
 =======
+=======
+>>>>>>> Stashed changes
         android:text="Показать" />
 
 </FrameLayout>
