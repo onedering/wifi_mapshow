@@ -9,8 +9,19 @@
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
+<<<<<<< Updated upstream
         android:layout_height="67dp"
         app:srcCompat="@android:drawable/alert_light_frame" />
+=======
+        android:layout_height="match_parent"
+        android:scaleType="fitCenter" />
+
+    <ImageView
+        android:id="@+id/overlay"
+        android:layout_width="match_parent"
+        android:layout_height="571dp"
+        android:scaleType="fitXY" />
+>>>>>>> Stashed changes
 
     <LinearLayout
         android:id="@+id/controlPanel"
@@ -28,12 +39,23 @@
             android:layout_marginTop="8dp"
             android:text="Открыть JSON" />
 
+        <Spinner
+            android:id="@+id/channelSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Spinner
+            android:id="@+id/networkSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
         <Button
             android:id="@+id/openMapButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Открыть карту" />
 
+<<<<<<< Updated upstream
     </LinearLayout>
 
     <FrameLayout
@@ -70,10 +92,21 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp" />
 
+=======
+        <Button
+            android:id="@+id/openJsonButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Открыть JSON" />
+
+    </LinearLayout>
+
+>>>>>>> Stashed changes
     <Button
         android:id="@+id/showButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+<<<<<<< Updated upstream
         android:layout_marginTop="8dp"
         android:text="Показать" />
 
@@ -84,3 +117,8 @@
         app:srcCompat="@android:drawable/bottom_bar" />
 
 </LinearLayout>
+=======
+        android:text="Показать" />
+
+</FrameLayout>
+>>>>>>> Stashed changes
