@@ -1,0 +1,3 @@
+<resources>
+    <dimen name="control_panel_bottom_padding">6dp</dimen>
+</resources>

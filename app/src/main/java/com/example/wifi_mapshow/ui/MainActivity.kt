@@ -17,6 +17,9 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import com.example.wifi_mapshow.R
 import com.example.wifi_mapshow.data.JsonRepository
 import com.example.wifi_mapshow.util.RssiColorUtil
@@ -73,7 +76,10 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         setContentView(R.layout.activity_main)
+
+        applySystemInsets()
 
         mapImage = findViewById(R.id.mapImage)
         overlay = findViewById(R.id.overlay)
@@ -82,6 +88,33 @@ class MainActivity : ComponentActivity() {
 
         setupSpinners()
         setupActions()
+    }
+
+    private fun applySystemInsets() {
+        val root = findViewById<android.view.View>(R.id.root)
+        val controlPanel = findViewById<android.view.View>(R.id.controlPanel)
+
+        ViewCompat.setOnApplyWindowInsetsListener(root) { _, insets ->
+            val displayCutoutAndBars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+            )
+            root.setPadding(
+                displayCutoutAndBars.left,
+                displayCutoutAndBars.top,
+                displayCutoutAndBars.right,
+                0
+            )
+
+            val bottomInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            controlPanel.setPadding(
+                controlPanel.paddingLeft,
+                controlPanel.paddingTop,
+                controlPanel.paddingRight,
+                bottomInsets.bottom + resources.getDimensionPixelSize(R.dimen.control_panel_bottom_padding)
+            )
+            insets
+        }
+        ViewCompat.requestApplyInsets(root)
     }
 
     private fun setupSpinners() {
