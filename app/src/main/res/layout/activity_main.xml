@@ -43,16 +43,24 @@
         android:paddingEnd="8dp"
         android:paddingBottom="6dp">
 
-        <Spinner
-            android:id="@+id/channelSpinner"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="40dp" />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-        <Spinner
-            android:id="@+id/networkSpinner"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginTop="4dp" />
+            <Spinner
+                android:id="@+id/channelSpinner"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1" />
+
+            <Spinner
+                android:id="@+id/networkSpinner"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="4dp"
+                android:layout_weight="1" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -61,33 +69,49 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/openMapButton"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="1"
-                android:minHeight="0dp"
-                android:text="Открыть карту"
-                android:textSize="13sp" />
-
-            <Button
                 android:id="@+id/openJsonButton"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
-                android:layout_marginStart="4dp"
                 android:layout_weight="1"
                 android:minHeight="0dp"
                 android:text="Открыть JSON"
-                android:textSize="13sp" />
+                android:textSize="11sp" />
 
             <Button
-                android:id="@+id/showButton"
+                android:id="@+id/openMapButton"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:layout_marginStart="4dp"
                 android:layout_weight="1"
                 android:minHeight="0dp"
-                android:text="Показать"
-                android:textSize="13sp" />
+                android:text="Открыть карту"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/showBasicInfoButton"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:minHeight="0dp"
+                android:text="Показать основную"
+                android:textSize="11sp" />
+
+            <Button
+                android:id="@+id/showAllInfoButton"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="4dp"
+                android:layout_weight="1"
+                android:minHeight="0dp"
+                android:text="Показать всю"
+                android:textSize="11sp" />
         </LinearLayout>
 
     </LinearLayout>

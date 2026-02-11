@@ -30,8 +30,13 @@ class MainActivity : ComponentActivity() {
     private companion object {
         const val TEMPLATE_MAX_X = 1000f
         const val TEMPLATE_MAX_Y = 1700f
-        const val DOT_SIZE_PX = 30f
+        const val DOT_SIZE_PX = 45f
         const val DOT_RADIUS_PX = DOT_SIZE_PX / 2f
+    }
+
+    private enum class InfoMode {
+        BASIC,
+        FULL
     }
 
     private val viewModel: MainViewModel by viewModels()
@@ -43,6 +48,7 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var channelAdapter: ArrayAdapter<ChannelBand>
     private lateinit var networkAdapter: ArrayAdapter<NetworkFilterOption>
+    private var infoMode: InfoMode = InfoMode.BASIC
 
     private val pickMapLauncher =
         registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
@@ -125,6 +131,7 @@ class MainActivity : ComponentActivity() {
             ChannelBand.entries.toTypedArray()
         )
         channelSpinner.adapter = channelAdapter
+        channelSpinner.setSelection(ChannelBand.entries.indexOf(ChannelBand.ALL))
 
         networkAdapter = ArrayAdapter(
             this,
@@ -143,12 +150,23 @@ class MainActivity : ComponentActivity() {
             pickJsonLauncher.launch(arrayOf("application/json", "text/json", "text/plain"))
         }
 
-        findViewById<Button>(R.id.showButton).setOnClickListener {
-            viewModel.selectedBand = channelSpinner.selectedItem as? ChannelBand ?: ChannelBand.ALL
-            viewModel.selectedNetworkFilter =
-                networkSpinner.selectedItem as? NetworkFilterOption ?: NetworkFilterOption.AllSsids
+        findViewById<Button>(R.id.showBasicInfoButton).setOnClickListener {
+            infoMode = InfoMode.BASIC
+            applySelectedFilters()
             drawPoints()
         }
+
+        findViewById<Button>(R.id.showAllInfoButton).setOnClickListener {
+            infoMode = InfoMode.FULL
+            applySelectedFilters()
+            drawPoints()
+        }
+    }
+
+    private fun applySelectedFilters() {
+        viewModel.selectedBand = channelSpinner.selectedItem as? ChannelBand ?: ChannelBand.ALL
+        viewModel.selectedNetworkFilter =
+            networkSpinner.selectedItem as? NetworkFilterOption ?: NetworkFilterOption.AllSsids
     }
 
     private fun updateNetworkOptions() {
@@ -204,7 +222,7 @@ class MainActivity : ComponentActivity() {
         val xScale = drawWidth / TEMPLATE_MAX_X
         val yScale = drawHeight / TEMPLATE_MAX_Y
 
-        points.forEach { filteredPoint ->
+        points.forEachIndexed { index, filteredPoint ->
             val px = offsetX + (filteredPoint.x * xScale)
             val py = offsetY + (filteredPoint.y * yScale)
 
@@ -212,7 +230,10 @@ class MainActivity : ComponentActivity() {
             canvas.drawCircle(px, py, DOT_RADIUS_PX, pointPaint)
 
             val network = filteredPoint.network
-            val label = "${network.rssi} dBm (${network.ssid}/${network.bssid}/ch${network.channel}/${network.rssi}dBm/${network.encryption})"
+            val label = when (infoMode) {
+                InfoMode.BASIC -> "${network.rssi} dBm | ch ${network.channel}"
+                InfoMode.FULL -> "${network.rssi} dBm | ch ${network.channel} | ${network.ssid} | ${network.bssid} | ${network.encryption}"
+            }
 
             drawLabel(
                 canvas = canvas,
@@ -220,7 +241,8 @@ class MainActivity : ComponentActivity() {
                 backgroundPaint = labelBackgroundPaint,
                 anchorX = px,
                 anchorY = py,
-                label = label
+                label = label,
+                pointIndex = index
             )
         }
 
@@ -233,22 +255,31 @@ class MainActivity : ComponentActivity() {
         backgroundPaint: Paint,
         anchorX: Float,
         anchorY: Float,
-        label: String
+        label: String,
+        pointIndex: Int
     ) {
         val textPaddingX = 10f
         val textPaddingY = 6f
-        val sideGap = DOT_RADIUS_PX + 6f
+        val sideGap = DOT_RADIUS_PX + 14f
+        val verticalShift = DOT_RADIUS_PX + 12f
         val lineHeight = textPaint.fontSpacing
 
-        val maxTextWidth = max(overlay.width * 0.5f, 180f)
+        val maxTextWidth = max(overlay.width * 0.35f, 140f)
         val lines = wrapText(label, textPaint, maxTextWidth)
         val maxLineWidth = lines.maxOfOrNull { textPaint.measureText(it) } ?: 0f
 
-        val alignLeftSide = anchorX <= overlay.width * (2f / 3f)
-        val desiredTextX = if (alignLeftSide) {
+        val placeOnLeft = (anchorX > overlay.width * 0.55f) || (pointIndex % 2 == 0)
+        val desiredTextX = if (placeOnLeft) {
             anchorX - sideGap - maxLineWidth
         } else {
             anchorX + sideGap
+        }
+
+        val directionUp = if (anchorY > overlay.height * 0.55f) true else pointIndex % 3 == 0
+        val preferredBaselineTop = if (directionUp) {
+            anchorY - verticalShift
+        } else {
+            anchorY + verticalShift
         }
 
         val textX = desiredTextX.coerceIn(
@@ -256,7 +287,7 @@ class MainActivity : ComponentActivity() {
             overlay.width - maxLineWidth - textPaddingX
         )
 
-        val baselineTop = (anchorY - DOT_RADIUS_PX).coerceIn(
+        val baselineTop = preferredBaselineTop.coerceIn(
             lineHeight,
             overlay.height - (lineHeight * (lines.size - 1)) - textPaddingY
         )
