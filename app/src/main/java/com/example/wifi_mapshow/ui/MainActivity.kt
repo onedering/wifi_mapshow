@@ -23,6 +23,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.wifi_mapshow.R
 import com.example.wifi_mapshow.data.JsonRepository
 import com.example.wifi_mapshow.util.RssiColorUtil
+import kotlin.math.max
 
 class MainActivity : ComponentActivity() {
 
@@ -212,23 +213,120 @@ class MainActivity : ComponentActivity() {
 
             val network = filteredPoint.network
             val label = "${network.rssi} dBm (${network.ssid}/${network.bssid}/ch${network.channel}/${network.rssi}dBm/${network.encryption})"
-            val textWidth = textPaint.measureText(label)
-            val textPaddingX = 10f
-            val textPaddingY = 6f
-            val textHeight = textPaint.textSize
 
-            val textX = px + DOT_RADIUS_PX + 6f
-            val textY = py - DOT_RADIUS_PX
-            val bgRect = RectF(
-                textX - textPaddingX,
-                textY - textHeight - textPaddingY,
-                textX + textWidth + textPaddingX,
-                textY + textPaddingY
+            drawLabel(
+                canvas = canvas,
+                textPaint = textPaint,
+                backgroundPaint = labelBackgroundPaint,
+                anchorX = px,
+                anchorY = py,
+                label = label
             )
-            canvas.drawRoundRect(bgRect, 8f, 8f, labelBackgroundPaint)
-            canvas.drawText(label, textX, textY, textPaint)
         }
 
         overlay.setImageDrawable(BitmapDrawable(resources, bitmap))
+    }
+
+    private fun drawLabel(
+        canvas: Canvas,
+        textPaint: Paint,
+        backgroundPaint: Paint,
+        anchorX: Float,
+        anchorY: Float,
+        label: String
+    ) {
+        val textPaddingX = 10f
+        val textPaddingY = 6f
+        val sideGap = DOT_RADIUS_PX + 6f
+        val lineHeight = textPaint.fontSpacing
+
+        val maxTextWidth = max(overlay.width * 0.5f, 180f)
+        val lines = wrapText(label, textPaint, maxTextWidth)
+        val maxLineWidth = lines.maxOfOrNull { textPaint.measureText(it) } ?: 0f
+
+        val alignLeftSide = anchorX <= overlay.width * (2f / 3f)
+        val desiredTextX = if (alignLeftSide) {
+            anchorX - sideGap - maxLineWidth
+        } else {
+            anchorX + sideGap
+        }
+
+        val textX = desiredTextX.coerceIn(
+            textPaddingX,
+            overlay.width - maxLineWidth - textPaddingX
+        )
+
+        val baselineTop = (anchorY - DOT_RADIUS_PX).coerceIn(
+            lineHeight,
+            overlay.height - (lineHeight * (lines.size - 1)) - textPaddingY
+        )
+
+        val bgRect = RectF(
+            textX - textPaddingX,
+            baselineTop - lineHeight - textPaddingY,
+            textX + maxLineWidth + textPaddingX,
+            baselineTop + ((lines.size - 1) * lineHeight) + textPaddingY
+        )
+        canvas.drawRoundRect(bgRect, 8f, 8f, backgroundPaint)
+
+        lines.forEachIndexed { index, line ->
+            val baselineY = baselineTop + (index * lineHeight)
+            canvas.drawText(line, textX, baselineY, textPaint)
+        }
+    }
+
+    private fun wrapText(text: String, textPaint: Paint, maxWidth: Float): List<String> {
+        if (textPaint.measureText(text) <= maxWidth) return listOf(text)
+
+        val words = text.split(" ")
+        val lines = mutableListOf<String>()
+        val currentLine = StringBuilder()
+
+        words.forEach { word ->
+            val candidate = if (currentLine.isEmpty()) word else "${currentLine} $word"
+            if (textPaint.measureText(candidate) <= maxWidth) {
+                currentLine.clear()
+                currentLine.append(candidate)
+            } else {
+                if (currentLine.isNotEmpty()) {
+                    lines.add(currentLine.toString())
+                    currentLine.clear()
+                }
+
+                if (textPaint.measureText(word) <= maxWidth) {
+                    currentLine.append(word)
+                } else {
+                    lines.addAll(breakLongWord(word, textPaint, maxWidth))
+                }
+            }
+        }
+
+        if (currentLine.isNotEmpty()) {
+            lines.add(currentLine.toString())
+        }
+
+        return lines
+    }
+
+    private fun breakLongWord(word: String, textPaint: Paint, maxWidth: Float): List<String> {
+        val chunks = mutableListOf<String>()
+        val current = StringBuilder()
+
+        word.forEach { char ->
+            val candidate = current.toString() + char
+            if (textPaint.measureText(candidate) <= maxWidth || current.isEmpty()) {
+                current.append(char)
+            } else {
+                chunks.add(current.toString())
+                current.clear()
+                current.append(char)
+            }
+        }
+
+        if (current.isNotEmpty()) {
+            chunks.add(current.toString())
+        }
+
+        return chunks
     }
 }
