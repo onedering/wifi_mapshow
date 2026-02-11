@@ -1,19 +1,89 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="?attr/colorSurface">
 
-    <FrameLayout
-        android:id="@+id/mapContainer"
+    <ImageView
+        android:id="@+id/imageView"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+<<<<<<< Updated upstream
+        android:layout_height="67dp"
+        app:srcCompat="@android:drawable/alert_light_frame" />
+=======
+        android:layout_height="match_parent"
+        android:scaleType="fitCenter" />
+
+    <ImageView
+        android:id="@+id/overlay"
+        android:layout_width="match_parent"
+        android:layout_height="571dp"
+        android:scaleType="fitXY" />
+>>>>>>> Stashed changes
+
+    <LinearLayout
+        android:id="@+id/controlPanel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+<<<<<<< Updated upstream
+        android:background="?attr/colorSurfaceContainerHigh"
+        android:padding="12dp"
+        android:elevation="6dp">
+=======
+        android:padding="8dp">
+
+        <Spinner
+            android:id="@+id/channelSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Spinner
+            android:id="@+id/networkSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/openMapButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Открыть карту" />
+>>>>>>> Stashed changes
+
+        <Button
+            android:id="@+id/openJsonButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Открыть JSON" />
+
+<<<<<<< Updated upstream
+        <Spinner
+            android:id="@+id/channelSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Spinner
+            android:id="@+id/networkSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/openMapButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Открыть карту" />
+
+<<<<<<< Updated upstream
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="398dp"
         android:layout_weight="1"
-        android:paddingStart="6dp"
-        android:paddingTop="4dp"
-        android:paddingEnd="6dp"
-        android:paddingBottom="4dp">
+        android:padding="8dp">
 
         <ImageView
             android:id="@+id/mapImage"
@@ -31,65 +101,52 @@
 
     </FrameLayout>
 
-    <LinearLayout
-        android:id="@+id/controlPanel"
+    <Spinner
+        android:id="@+id/channelSpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="?attr/colorSurfaceContainerHigh"
-        android:elevation="4dp"
-        android:paddingStart="8dp"
-        android:paddingTop="6dp"
-        android:paddingEnd="8dp"
-        android:paddingBottom="6dp">
+        android:layout_marginTop="8dp" />
 
-        <Spinner
-            android:id="@+id/channelSpinner"
-            android:layout_width="match_parent"
-            android:layout_height="40dp" />
+    <Spinner
+        android:id="@+id/networkSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp" />
 
-        <Spinner
-            android:id="@+id/networkSpinner"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginTop="4dp" />
-
-        <LinearLayout
+=======
+        <Button
+            android:id="@+id/openJsonButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/openMapButton"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="1"
-                android:minHeight="0dp"
-                android:text="Открыть карту"
-                android:textSize="13sp" />
-
-            <Button
-                android:id="@+id/openJsonButton"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_marginStart="4dp"
-                android:layout_weight="1"
-                android:minHeight="0dp"
-                android:text="Открыть JSON"
-                android:textSize="13sp" />
-
-            <Button
-                android:id="@+id/showButton"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_marginStart="4dp"
-                android:layout_weight="1"
-                android:minHeight="0dp"
-                android:text="Показать"
-                android:textSize="13sp" />
-        </LinearLayout>
+            android:text="Открыть JSON" />
 
     </LinearLayout>
 
+>>>>>>> Stashed changes
+=======
+    </LinearLayout>
+
+>>>>>>> Stashed changes
+    <Button
+        android:id="@+id/showButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+        android:layout_marginTop="8dp"
+        android:text="Показать" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+        app:srcCompat="@android:drawable/bottom_bar" />
+
 </LinearLayout>
+=======
+=======
+>>>>>>> Stashed changes
+        android:text="Показать" />
+
+</FrameLayout>
+>>>>>>> Stashed changes
