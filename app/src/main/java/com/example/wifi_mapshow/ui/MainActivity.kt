@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.RectF
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
@@ -143,9 +144,16 @@ class MainActivity : ComponentActivity() {
 
         val bitmap = Bitmap.createBitmap(overlay.width, overlay.height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
-        val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+
+        val pointPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+        val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = Color.WHITE
             textSize = 24f
             strokeWidth = 2f
+        }
+        val labelBackgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = Color.argb(150, 0, 0, 0)
+            style = Paint.Style.FILL
         }
 
         val mapWidth = mapDrawable.intrinsicWidth.toFloat().coerceAtLeast(1f)
@@ -166,14 +174,26 @@ class MainActivity : ComponentActivity() {
             val px = offsetX + (filteredPoint.x * xScale)
             val py = offsetY + (filteredPoint.y * yScale)
 
-            paint.color = RssiColorUtil.colorForRssi(filteredPoint.network.rssi)
-            canvas.drawCircle(px, py, DOT_RADIUS_PX, paint)
+            pointPaint.color = RssiColorUtil.colorForRssi(filteredPoint.network.rssi)
+            canvas.drawCircle(px, py, DOT_RADIUS_PX, pointPaint)
 
-
-            paint.color = Color.BLACK
             val network = filteredPoint.network
-            val fullSet = "${network.ssid}/${network.bssid}/ch${network.channel}/${network.rssi}dBm/${network.encryption}"
-            canvas.drawText("${network.rssi} dBm ($fullSet)", px + 8f, py - 8f, paint)
+            val label = "${network.rssi} dBm (${network.ssid}/${network.bssid}/ch${network.channel}/${network.rssi}dBm/${network.encryption})"
+            val textWidth = textPaint.measureText(label)
+            val textPaddingX = 10f
+            val textPaddingY = 6f
+            val textHeight = textPaint.textSize
+
+            val textX = px + DOT_RADIUS_PX + 6f
+            val textY = py - DOT_RADIUS_PX
+            val bgRect = RectF(
+                textX - textPaddingX,
+                textY - textHeight - textPaddingY,
+                textX + textWidth + textPaddingX,
+                textY + textPaddingY
+            )
+            canvas.drawRoundRect(bgRect, 8f, 8f, labelBackgroundPaint)
+            canvas.drawText(label, textX, textY, textPaint)
         }
 
         overlay.setImageDrawable(BitmapDrawable(resources, bitmap))
